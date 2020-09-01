@@ -12,8 +12,13 @@ def signup():
         name = request.args.get('name')
         email = request.args.get('email')
         password = request.args.get('pass')
-        hash_passord = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        json = request.get_json()
+        if json:
+            name = json.get('name')
+            email = json.get('email')
+            password = json.get('pass')
         if name and email and password:
+            hash_passord = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
             user = User(name, email, hash_passord)
             if user:
                 status_code = insert(user)
@@ -31,6 +36,10 @@ def signin():
     if request.method == 'POST':
         email = request.args.get('email')
         password = request.args.get('pass')
+        json = request.get_json()
+        if json:
+            email = json.get('email')
+            password = json.get('pass')
         if email and password:
             user = User.query.filter_by(email=email).first()
             if user:
